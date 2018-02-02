@@ -13,11 +13,14 @@ class BacklogProperty(object):
     """
     Backlog API v2 class
     This class get backlog space name and user api key.
+    :param str path: 認証ファイルのパス
+    :param str filename: 認証ファイル名
     """
 
-    def __init__(self, space, api_key):
-        self.api_key = '?apiKey={}'.format(api_key)
-        self.base_endpoint = 'https://{}.backlog.jp/api/v2/'.format(space)
+    def __init__(self, path=None, filename=None):
+        auth = _load_config(path=path, filename=filename)
+        self._api_key = '?apiKey={}'.format(auth['api_key'])
+        self.base_endpoint = 'https://{}.backlog.jp/api/v2/'.format(auth['space'])
 
     def common(self, method, url, *,
                url_params=None,
@@ -31,7 +34,7 @@ class BacklogProperty(object):
         :param dict request_params:
         """
         relative_path = url.format(**url_params)
-        endpoint = os.path.join(self.base_endpoint, relative_path, self.api_key)
+        endpoint = os.path.join(self.base_endpoint, relative_path, self._api_key)
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         method = method.lower()
 
@@ -58,13 +61,6 @@ class BacklogProperty(object):
         if response.status_code == 204:
             return None
         return response.json()
-
-    def _check_parameter(self, params, required):
-        """ checking parameter type """
-        key = params.keys()
-        for req_word in required:
-            if req_word not in key:
-                raise Exception('Not input required parameter')
 
     def get_space(self):
         """ Get space information """
@@ -101,7 +97,7 @@ class BacklogProperty(object):
     def add_issues(self, input_request_params):
         """ Add issue """
         required_key = ['projectId', 'summary', 'issueTypeId', 'priorityId']
-        self._check_parameter(required_key)
+        _check_parameter(params=input_request_params, required=required_key)
         return self.common('POST',
                            'issues',
                            request_params=input_request_params)
@@ -141,7 +137,7 @@ class BacklogProperty(object):
         """ Add user """
         required_key = ['userId', 'password', 'name',
                         'mailAddress', 'roleType']
-        self._check_parameter(required_key)
+        _check_parameter(params=input_request_params, required=required_key)
         return self.common('POST', 'users',
                            request_params=input_request_params)
 
@@ -156,7 +152,7 @@ class BacklogProperty(object):
         required_key = ['name', 'key', 'chartEnabled',
                         'projectLeaderCanEditProjectLeader',
                         'subtaskingEnabled', 'textFormattingRule']
-        self._check_parameter(required_key)
+        _check_parameter(params=input_request_params, required=required_key)
         return self.common('POST', 'projects',
                            request_params=input_request_params)
 
@@ -169,7 +165,7 @@ class BacklogProperty(object):
     def add_project_user(self, projectIdOrKey, input_request_params):
         """ Add project user """
         required_key = ['userId']
-        self._check_parameter(required_key)
+        _check_parameter(params=input_request_params, required=required_key)
         return self.common('POST',
                            'projects/{projectIdOrKey}/users',
                            url_params={'projectIdOrKey': projectIdOrKey},
@@ -178,7 +174,7 @@ class BacklogProperty(object):
     def delete_project_user(self, projectIdOrKey, input_request_params):
         """ Delete project user """
         required_key = ['userId']
-        self._check_parameter(required_key)
+        _check_parameter(params=input_request_params, required=required_key)
         return self.common('DELETE',
                            'projects/{projectIdOrKey}/users',
                            url_params={'projectIdOrKey': projectIdOrKey},
@@ -187,7 +183,7 @@ class BacklogProperty(object):
     def add_project_admin(self, projectIdOrKey, input_request_params):
         """ Add project admin user """
         required_key = ['userId']
-        self._check_parameter(required_key)
+        _check_parameter(params=input_request_params, required=required_key)
         return self.common('POST',
                            'projects/{projectIdOrKey}/administrators',
                            url_params={'projectIdOrKey': projectIdOrKey},
@@ -196,7 +192,7 @@ class BacklogProperty(object):
     def delete_project_admin(self, projectIdOrKey, input_request_params):
         """ Delete project admin user """
         required_key = ['userId']
-        self._check_parameter(required_key)
+        _check_parameter(params=input_request_params, required=required_key)
         return self.common('DELETE',
                            'projects/{projectIdOrKey}/administrators',
                            url_params={'projectIdOrKey': projectIdOrKey},
@@ -226,12 +222,16 @@ class BacklogProperty(object):
                 yield issue
 
 
-def load_config(path=os.getcwd(), filename="config.json"):
+def _load_config(path, filename):
     """
     :param str path: configファイルのpath
     :param str filename: configファイルの名前
-    :return dict:
+    :rtype dict:
     """
+    if path is None:
+        path = os.getcwd()
+    if filename is None:
+        filename = "config.json"
     data = dict()
     file_path = os.path.join(path, filename)
     try:
@@ -246,3 +246,16 @@ def load_config(path=os.getcwd(), filename="config.json"):
         return data
     else:
         Exception("json file do not have auth key.")
+
+
+def _check_parameter(params, required):
+    """
+    checking parameter type
+    :rtype: None
+    """
+    key = params.keys()
+    for req_word in required:
+        if req_word not in key:
+            print(req_word, ': ')
+            raise Exception('Not input required parameter.')
+    return None
