@@ -33,8 +33,11 @@ class BacklogProperty(object):
         :param dict query_params:
         :param dict request_params:
         """
+        if url_params is None:
+            url_params = {}
         relative_path = url.format(**url_params)
-        endpoint = os.path.join(self.base_endpoint, relative_path, self._api_key)
+        endpoint = os.path.join(self.base_endpoint, relative_path + self._api_key)
+        print(endpoint)
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         method = method.lower()
 
@@ -70,7 +73,7 @@ class BacklogProperty(object):
         """ Get projects """
         return self.common('GET', 'projects', query_params=input_query_params)
 
-    def get_progect_info(self, projectIdOrKey):
+    def get_project_info(self, projectIdOrKey):
         """ Get project information """
         return self.common('GET',
                            'projects/{projectIdOrKey}',
@@ -191,7 +194,7 @@ class BacklogProperty(object):
 
     def delete_project_admin(self, projectIdOrKey, input_request_params):
         """ Delete project admin user """
-        required_key = ['userId']
+        required_key = {'userId'}
         _check_parameter(params=input_request_params, required=required_key)
         return self.common('DELETE',
                            'projects/{projectIdOrKey}/administrators',
@@ -232,7 +235,7 @@ def _load_config(path, filename):
         path = os.getcwd()
     if filename is None:
         filename = "config.json"
-    data = dict()
+    data = {}
     file_path = os.path.join(path, filename)
     try:
         with open(file_path, "r") as f:
@@ -240,7 +243,7 @@ def _load_config(path, filename):
     except IOError:
         Exception("No such json file.")
 
-    if data is None:
+    if not data:
         Exception("json file is empty.")
     if "space" in data.keys() or "api_key" in data.keys():
         return data
