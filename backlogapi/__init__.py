@@ -8,6 +8,8 @@ import os
 import json
 import requests
 
+from .backlogclient import BacklogClient
+
 
 class BacklogProperty(object):
     """
