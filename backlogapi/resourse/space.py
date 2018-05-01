@@ -2,7 +2,8 @@
 Model for Backlog Space
 """
 
-from base import BacklogBase
+from .base import BacklogBase
+from .. import utilities
 
 
 class Space(BacklogBase):
@@ -42,6 +43,7 @@ class Space(BacklogBase):
         """
         return self.client.fetch_json(uri_path='space/notification')
 
+    @utilities.protect((1,))
     def disk_usage(self):
         """
         Representing Backlog disk usage for space

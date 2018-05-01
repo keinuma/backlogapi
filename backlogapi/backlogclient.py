@@ -6,7 +6,8 @@ import os
 import json
 import requests
 
-from space import Space
+from .resourse.space import Space
+from . import utilities
 
 
 class BacklogClient:
@@ -21,6 +22,7 @@ class BacklogClient:
         self._api_key = api_key
         self._space_name = space_name
         self.model_endpoint = f'https://{self._space_name}.backlog.jp/api/v2/'
+        self.role = None
 
     def fetch_json(self, uri_path, method='GET', headers=None, query_params=None, post_params=None, files=None):
         """
@@ -51,7 +53,6 @@ class BacklogClient:
         if uri_path.startswith('/'):
             uri_path = uri_path[1:]
         url = self.model_endpoint + uri_path
-        print(url)
 
         response = requests.request(method=method, url=url, params=query_params, headers=headers,
                                     data=data, files=files)
@@ -66,7 +67,14 @@ class BacklogClient:
     def get_space(self):
         """
         Get space information
-        :return:
         """
         res = self.fetch_json('space', method='GET')
-        return Space.from_json(self, res)
+        return Space(self).from_json(res)
+
+    def check_role(self):
+        """
+        Check client user authority
+        """
+        res = self.fetch_json('users/myself')
+        self.role = res.get('roleType', None)
+
