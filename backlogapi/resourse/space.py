@@ -50,3 +50,12 @@ class Space(BacklogBase):
         """
         return self.client.fetch_json(uri_path='space/diskUsage')
 
+    @utilities.protect((1, 2, 3, 4))
+    def post_attachment(self, files):
+        """
+        Post attachment file to space
+        :param file files: file objects
+        """
+        return self.client.fetch_json(uri_path='space/attachment', method='POST', files=files)
+
+
