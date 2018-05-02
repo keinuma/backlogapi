@@ -9,6 +9,7 @@ import json
 import requests
 
 from .backlogclient import BacklogClient
+from .resourse import *
 
 
 class BacklogProperty(object):
