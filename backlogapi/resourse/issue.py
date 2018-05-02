@@ -228,7 +228,7 @@ class IssueSharedFile(BacklogBase):
             ('created', 'created'),
             ('_updated_user', 'updatedUser'),
             ('updated', 'updated'),
-            ('project_id', 'project_id'),
+            ('issue_id', 'issue_id'),
         )
 
     def from_json(self, response):
@@ -250,4 +250,4 @@ class IssueSharedFile(BacklogBase):
         """
         res = self.client.fetch_json(uri_path=f'issues/{issue_id}/sharedFiles',
                                      method='POST', post_params={'fileId': self.id})
-        return IssueSharedFile(self).from_json(res)
+        return IssueSharedFile(self.client).from_json(res)
