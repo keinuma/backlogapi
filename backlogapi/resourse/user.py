@@ -10,6 +10,8 @@ class User(BacklogBase):
     """
     Representing Backlog user
     """
+    endpoint = 'users'
+
     def __init__(self, client):
         super().__init__(client)
         self._attr = (
