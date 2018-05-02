@@ -27,7 +27,7 @@ class Group(BacklogBase):
             ('_created_user', 'createdUser'),
             ('created', 'created'),
             ('_updated_user', 'updatedUser'),
-            ('updated', 'updated')
+            ('updated', 'updated'),
         )
     
     def from_json(self, response):
