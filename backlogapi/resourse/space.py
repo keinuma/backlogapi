@@ -14,6 +14,7 @@ class Space(BacklogBase):
         super().__init__(client)
         self._attr = (
             ('id', 'spaceKey'),
+            ('space_key', 'spaceKey'),
             ('name', 'name'),
             ('owner_id', 'ownerId'),
             ('lang', 'lang'),
