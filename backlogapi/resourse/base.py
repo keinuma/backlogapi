@@ -8,12 +8,16 @@ class BacklogBase:
     Base class is identified by id and class name
     """
     endpoint = None
+    _crud_func = ('all', 'get', 'filter', 'create', 'update', 'delete')
 
     def __init__(self, client):
         self.client = client
         self.id = None
         self.name = None
         self._attr = None
+        if self._crud_func is not None:
+            for func_name in self._crud_func:
+                setattr(self, func_name, getattr(super(self.__class__, self), '_' + func_name))
 
     def __repr__(self):
         return f'<{self.__class__.__name__}:{self.name}>'
@@ -36,21 +40,21 @@ class BacklogBase:
             setattr(self, key, response.get(res, None))
         return self
 
-    def all(self):
+    def _all(self):
         """
         Get all object
         """
         res = self.client.fetch_json(self.endpoint, method='GET')
         return [self.__class__(self.client).from_json(x) for x in res]
 
-    def get(self, id_):
+    def _get(self, id_):
         """
         Get one object
         """
         res = self.client.fetch_json('/'.join([self.endpoint, id_]), method='GET')
         return self.__class__(self.client).from_json(res)
 
-    def filter(self, **params):
+    def _filter(self, **params):
         """
         Get filtering object
         :return:
@@ -58,14 +62,14 @@ class BacklogBase:
         res = self.client.fetch_json(self.endpoint, method='GET', query_params=params)
         return [self.__class__(self.client).from_json(x) for x in res]
 
-    def create(self, **params):
+    def _create(self, **params):
         """
         Create new object
         """
         res = self.client.fetch_json(self.endpoint, method='POST', post_params=params)
         return self.__class__(self.client).from_json(res)
 
-    def update(self, id_=None, **params):
+    def _update(self, id_=None, **params):
         """
         Update the object
         """
@@ -75,7 +79,7 @@ class BacklogBase:
             res = self.client.fetch_json(f'{self.endpoint}/{id_}', method='POST', post_params=params)
         return self.__class__(self.client).from_json(res)
 
-    def delete(self, id_=None):
+    def _delete(self, id_=None):
         if self.id is not None:
             res = self.client.fetch_json(f'{self.endpoint}/{self.id}', method='DELETE')
         else:
