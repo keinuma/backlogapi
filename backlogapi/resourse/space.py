@@ -10,6 +10,10 @@ class Space(BacklogBase):
     """
     Representing a Backlog space.
     """
+
+    endpoint = 'space'
+    _crud_func = ('get',)
+
     def __init__(self, client):
         super().__init__(client)
         self._attr = (
@@ -59,4 +63,10 @@ class Space(BacklogBase):
         """
         return self.client.fetch_json(uri_path='space/attachment', method='POST', files=files)
 
+    def get(self):
+        """
+        Get one object
+        """
+        res = self.client.fetch_json(self.endpoint, method='GET')
+        return self.__class__(self.client).from_json(res)
 

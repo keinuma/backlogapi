@@ -3,7 +3,7 @@ Model for Backlog notification
 """
 
 
-from . import BacklogBase, User, Project, Issue, IssueComment
+from . import BacklogBase, Issue, IssueComment
 
 
 class Notification(BacklogBase):
@@ -11,7 +11,7 @@ class Notification(BacklogBase):
     Representing Project star
     """
 
-    endpoint = 'notification'
+    endpoint = 'notifications'
 
     def __init__(self, client):
         super().__init__(client)
@@ -30,13 +30,12 @@ class Notification(BacklogBase):
         )
 
     def from_json(self, response):
+        from . import User, Project
         res = super().from_json(response)
-        setattr(self, 'project', Project(self.client).from_json(res['_project']))
-        setattr(self, 'issue', Issue(self.client).from_json(res['_issue']))
-        setattr(self, 'comment', IssueComment(self.client).from_json(res['_comment']))
-        setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
-        setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
-        setattr(self, 'sender', User(self.client).from_json(res['_sender']))
+        setattr(self, 'project', Project(self.client).from_json(res._project))
+        setattr(self, 'issue', Issue(self.client).from_json(res._issue))
+        setattr(self, 'comment', IssueComment(self.client).from_json(res._comment))
+        setattr(self, 'sender', User(self.client).from_json(res._sender))
         return self
 
     def count(self, **params):

@@ -3,9 +3,7 @@ Model for Backlog group
 """
 from typing import List
 
-from backlogapi.resourse.user import User
-from .base import BacklogBase
-from .user import User
+from . import BacklogBase
 from .. import utilities
 
 
@@ -31,6 +29,7 @@ class Group(BacklogBase):
         )
     
     def from_json(self, response):
+        from . import User
         super().from_json(response)
         if hasattr(self, '_members'):
             self.members = [User(self).from_json(u) for u in self._members]

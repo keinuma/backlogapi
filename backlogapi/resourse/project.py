@@ -2,10 +2,7 @@
 Model for Backlog projects
 """
 
-from .base import BacklogBase
-from .user import User
-from .shared_file import SharedFile
-from .webhook import Webhook
+from . import BacklogBase
 from .. import utilities
 
 
@@ -42,6 +39,7 @@ class Project(BacklogBase):
         """
         Add user the project
         """
+        from . import User
         res = self.client.fetch_json(uri_path=f'projects/{self.id}/users')
         return [User(self.client).from_json(u) for u in res]
 
@@ -70,6 +68,7 @@ class Project(BacklogBase):
         """
         Get admin user the project
         """
+        from . import User
         res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrator')
         return [User(self.client).from_json(u) for u in res]
 
@@ -79,6 +78,7 @@ class Project(BacklogBase):
         Add admin user the project
         :param user_id:
         """
+        from . import User
         res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrator',
                                      method='POST',
                                      post_params={'userId': user_id})
@@ -90,6 +90,7 @@ class Project(BacklogBase):
         Delete admin user the project
         :param user_id:
         """
+        from . import User
         res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrator',
                                      method='DELETE',
                                      post_params={'userId': user_id})
@@ -136,6 +137,7 @@ class Project(BacklogBase):
         """
         Get shared files for the project
         """
+        from . import SharedFile
         res = self.client.fetch_json(uri_path=f'projects/{self.id}/files/metadata/{path}',
                                      query_params=params)
         for x in res:
@@ -147,10 +149,21 @@ class Project(BacklogBase):
         """
         Get webhook for the project
         """
+        from . import Webhook
         res = self.client.fetch_json(uri_path=f'projects/{self.id}/webhooks')
         for x in res:
             x['project_id'] = self.id
         return [Webhook(self.client).from_json(i) for i in res]
+
+    @property
+    def project_group(self):
+        """
+        Get project group
+        """
+        res = self.client.fetch_json(uri_path=f'projects/{self.id}/groups')
+        for x in res:
+            x['project_id'] = self.id
+        return [ProjectGroup(self.client).from_json(i) for i in res]
 
 
 class IssueType(BacklogBase):
@@ -255,4 +268,32 @@ class CustomField(BacklogBase):
         """
         super().from_json(response=response)
         setattr(self, 'endpoint', f'projects/{self.project_id}/versions')
+        return self
+
+
+class ProjectGroup(BacklogBase):
+    """
+    Representing project group
+    """
+    def __init__(self, client):
+        super().__init__(client)
+        self.project_id = None
+        self._attr = (
+            ('id', 'id'),
+            ('name', 'name'),
+            ('_members', 'members'),
+            ('display_order', 'displayOrder'),
+            ('_created_user', 'createdUser'),
+            ('created', 'created'),
+            ('_updated_user', 'updatedUser'),
+            ('updated', 'updated'),
+            ('project_id', 'projectId'),
+        )
+
+    def from_json(self, response):
+        from . import User
+        res = super().from_json(response)
+        setattr(self, 'members', [User(self.client).from_json(member) for member in res['_members']])
+        setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
+        setattr(self, 'updated_user', User(self.client).from_json(res['_updated_user']))
         return self

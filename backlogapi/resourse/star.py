@@ -3,7 +3,7 @@ Model for Backlog star
 """
 
 
-from . import BacklogBase, User
+from . import BacklogBase
 
 
 class Star(BacklogBase):
@@ -27,6 +27,7 @@ class Star(BacklogBase):
         """
         Create the webhook object and set endpoint
         """
+        from . import User
         res = super().from_json(response=response)
         setattr(self, 'presenter', User(self.client).from_json(res['_presenter']))
         return self

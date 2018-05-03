@@ -3,7 +3,7 @@ Model for Backlog repository
 """
 
 
-from . import BacklogBase, User
+from . import BacklogBase
 
 
 class Repository(BacklogBase):
@@ -34,6 +34,7 @@ class Repository(BacklogBase):
         """
         Create the webhook object and set endpoint
         """
+        from . import User
         res = super().from_json(response=response)
         setattr(self, 'endpoint', f'projects/{self.project_id}/git/repositories')
         setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))

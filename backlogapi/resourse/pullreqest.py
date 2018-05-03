@@ -3,7 +3,7 @@ Model for Backlog repository
 """
 
 
-from . import BacklogBase, User, Issue
+from . import BacklogBase, Issue
 
 
 class PullRequest(BacklogBase):
@@ -43,6 +43,7 @@ class PullRequest(BacklogBase):
         """
         Create the webhook object and set endpoint
         """
+        from . import User
         res = super().from_json(response=response)
         setattr(self, 'endpoint', f'projects/{self.project_id}/git/repositories/{self.id}/pullRequests')
         setattr(self, 'assignee', User(self.client).from_json(res['_assignee']))
@@ -62,6 +63,36 @@ class PullRequest(BacklogBase):
                                          query_params=params)
             return res['count']
 
+    @property
+    def comments(self):
+        """
+        Get pull request comments
+        """
+        res = self.client.fetch_json(
+            uri_path=f'projects/{self.project_id}/git/repositories/'
+                     f'{self.repository_id}/pullRequests/{self.id}/comments'
+        )
+        for x in res:
+            x['project_id'] = self.project_id
+            x['repository_id'] = self.repository_id
+            x['number'] = self.number
+        return [PullRequestComment(r) for r in res]
+
+    @property
+    def attachments(self):
+        """
+        Get pull request comments
+        """
+        res = self.client.fetch_json(
+            uri_path=f'projects/{self.project_id}/git/repositories/'
+                     f'{self.repository_id}/pullRequests/{self.id}/attachments'
+        )
+        for x in res:
+            x['project_id'] = self.project_id
+            x['repository_id'] = self.repository_id
+            x['number'] = self.number
+        return [PullRequestComment(r) for r in res]
+
 
 class PullRequestComment(BacklogBase):
     """
@@ -71,6 +102,7 @@ class PullRequestComment(BacklogBase):
         super().__init__(client)
         self.project_id = None
         self.repository_id = None
+        self.number = None
         self.created_user = None
         self._attr = (
             ('id', 'id'),
@@ -82,15 +114,18 @@ class PullRequestComment(BacklogBase):
             ('stars', 'stars'),
             ('notifications', 'notifications'),
             ('project_id', 'project_id'),
+            ('repository_id', 'repository_id'),
+            ('number', 'number'),
         )
 
     def from_json(self, response):
         """
         Create the pull request comment object and set endpoint
         """
+        from . import User
         res = super().from_json(response=response)
         setattr(self, 'endpoint',
-                f'projects/{self.project_id}/git/repositories/{self.repository_id}/pullRequests/{self.id}/comments')
+                f'projects/{self.project_id}/git/repositories/{self.repository_id}/pullRequests/{self.number}/comments')
         setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
         return self
 
@@ -114,6 +149,7 @@ class PullRequestAttachment(BacklogBase):
         super().__init__(client)
         self.project_id = None
         self.repository_id = None
+        self.number = None
         self.created_user = None
         self._attr = (
             ('id', 'id'),
@@ -121,17 +157,21 @@ class PullRequestAttachment(BacklogBase):
             ('size', 'size'),
             ('_created_user', 'createdUser'),
             ('created', 'created'),
+            ('project_id', 'project_id'),
+            ('repository_id', 'repository_id'),
+            ('number', 'number'),
         )
 
     def from_json(self, response):
         """
         Create the pull request attachment object and set endpoint
         """
+        from . import User
         res = super().from_json(response=response)
         setattr(
             self,
             'endpoint',
-            f'projects/{self.project_id}/git/repositories/{self.repository_id}/pullRequests/{self.id}/attachments'
+            f'projects/{self.project_id}/git/repositories/{self.repository_id}/pullRequests/{self.number}/attachments'
         )
         setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
         return self
@@ -145,3 +185,13 @@ class PullRequestAttachment(BacklogBase):
         else:
             res = self.client.fetch_json(uri_path=f'{self.endpoint}/count')
             return res['count']
+
+    def download(self, id_=None):
+        """
+        Download pull request attachment file
+        """
+        if self.id is not None:
+            self.client.fetch_json(uri_path=f'{self.endpoint}/{self.id}')
+        else:
+            self.client.fetch_json(uri_path=f'{self.endpoint}/{id_}')
+        return self
