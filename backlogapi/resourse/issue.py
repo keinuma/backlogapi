@@ -3,7 +3,6 @@ Model for Backlog projects
 """
 
 from .base import BacklogBase
-from .user import User
 from .project import IssueType, Version
 from .shared_file import SharedFile
 from .star import Star
@@ -47,7 +46,7 @@ class Issue(BacklogBase):
             ('_updated_user', 'updatedUser'),
             ('updated', 'updated'),
             ('custom_fields', 'customFields'),
-            ('attachments', 'attachments'),
+            ('_attachments', 'attachments'),
             ('_shared_files', 'sharedFiles'),
             ('_stars', 'stars'),
         )
@@ -100,15 +99,21 @@ class Issue(BacklogBase):
         return IssueSharedFile(self).from_json(res)
 
     def from_json(self, response):
+        from . import User
         res = super().from_json(response)
-        setattr(self, 'issue_type', IssueType(self.client).from_json(res['_issue_type']))
-        setattr(self, 'priority', Priority(self.client).from_json(res['_priority']))
-        setattr(self, 'assignee', User(self.client).from_json(res['_assignee']))
-        setattr(self, 'milestone', Version(self.client).from_json(res['_milestone']))
-        setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
-        setattr(self, 'updated_user', User(self.client).from_json(res['_updated_user']))
-        setattr(self, 'shared_files', [SharedFile(self.client).from_json(f) for f in res['_shared_files']])
-        setattr(self, 'stars', [Star(self.client).from_json(f) for f in res['_stars']])
+        setattr(self, 'issue_type', IssueType(self.client).from_json(res._issue_type))
+        setattr(self, 'priority', Priority(self.client).from_json(res._priority))
+        setattr(self, 'assignee', User(self.client).from_json(res._assignee))
+        setattr(self, 'milestone', [Version(self.client).from_json(r) for r in res._milestone])
+        setattr(self, 'created_user', User(self.client).from_json(res._created_user))
+        setattr(self, 'updated_user', User(self.client).from_json(res._updated_user))
+        if res._attachments != []:
+            setattr(self, 'attachments', [IssueAttachment(self.client).from_json(r) for r in res._attachments])
+        if res._shared_files != []:
+            setattr(self, 'shared_files', [SharedFile(self.client).from_json(f) for f in res._shared_files])
+        if res._stars != []:
+            setattr(self, 'stars', [Star(self.client).from_json(f) for f in res._stars])
+        return self
 
 
 class Status(BacklogBase):
@@ -174,9 +179,11 @@ class IssueComment(BacklogBase):
         )
 
     def from_json(self, response):
+        from . import User
         res = super().from_json(response)
         setattr(self, 'endpoint', f'issues/{self.issue_id}/comments')
-        setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
+        setattr(self, 'created_user', User(self.client).from_json(res._created_user))
+        return self
 
     @property
     def count(self, **params):
@@ -205,9 +212,12 @@ class IssueAttachment(BacklogBase):
         )
 
     def from_json(self, response):
+        from . import User
         res = super().from_json(response)
         setattr(self, 'endpoint', f'issues/{self.issue_id}/attachments')
-        setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
+        if hasattr(res, '_created_user'):
+            setattr(self, 'created_user', User(self.client).from_json(res._created_user))
+        return self
 
 
 class IssueSharedFile(BacklogBase):
@@ -232,10 +242,12 @@ class IssueSharedFile(BacklogBase):
         )
 
     def from_json(self, response):
+        from . import User
         res = super().from_json(response)
         setattr(self, 'endpoint', f'issues/{self.issue_id}/sharedFiles')
-        setattr(self, 'created_user', User(self.client).from_json(res['_created_user']))
-        setattr(self, 'updated_user', User(self.client).from_json(res['_updated_user']))
+        setattr(self, 'created_user', User(self.client).from_json(res._created_user))
+        setattr(self, 'updated_user', User(self.client).from_json(res._updated_user))
+        return self
 
     def download(self):
         """
