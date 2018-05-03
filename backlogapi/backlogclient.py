@@ -6,10 +6,7 @@ import os
 import json
 import requests
 
-from .resourse.space import Space
-from .resourse.user import User
-from .resourse.group import Group
-from .resourse.project import Project
+from .resourse import *
 
 
 class BacklogClient:
@@ -25,11 +22,17 @@ class BacklogClient:
         self._space_name = space_name
         self.model_endpoint = f'https://{self._space_name}.backlog.jp/api/v2/'
         self.role = None
-        self.check_role()
+        # self.check_role()
         self.space = Space(self)
         self.user = User(self)
         self.group = Group(self)
         self.project = Project(self)
+        self.issue = Issue(self)
+        self.webhook = Webhook(self)
+        self.notification = Notification(self)
+        self.repository = Repository(self)
+        self.pullrequest = PullRequest(self)
+        self.wiki = Wiki(self)
 
     def fetch_json(self, uri_path, method='GET', headers=None, query_params=None, post_params=None, files=None):
         """
