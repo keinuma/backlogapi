@@ -18,7 +18,7 @@ class User(BacklogBase):
             ('id', 'id'),
             ('user_id', 'userId'),
             ('name', 'name'),
-            ('roleType', 'roleType'),
+            ('role_type', 'roleType'),
             ('lang', 'lang'),
             ('mail_address', 'mailAddress')
         )

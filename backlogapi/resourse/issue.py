@@ -3,7 +3,7 @@ Model for Backlog projects
 """
 
 from .base import BacklogBase
-from .project import IssueType, Version
+from .project import IssueType, Version, Category
 from .shared_file import SharedFile
 from .star import Star
 from .. import utilities
@@ -25,7 +25,7 @@ class Issue(BacklogBase):
             ('id', 'id'),
             ('project_id', 'projectId'),
             ('issue_key', 'issueKey'),
-            ('key_id', 'keiId'),
+            ('key_id', 'keyId'),
             ('_issue_type', 'issueType'),
             ('summary', 'summary'),
             ('description', 'description'),
@@ -33,8 +33,8 @@ class Issue(BacklogBase):
             ('_priority', 'priority'),
             ('_status', 'status'),
             ('_assignee', 'assignee'),
-            ('category', 'category'),
-            ('versions', 'versions'),
+            ('_category', 'category'),
+            ('_versions', 'versions'),
             ('_milestone', 'milestone'),
             ('start_date', 'startDate'),
             ('due_date', 'dueDate'),
@@ -51,8 +51,7 @@ class Issue(BacklogBase):
             ('_stars', 'stars'),
         )
 
-    @property
-    def count(self, **params):
+    def get_count(self, **params):
         """
         Get issue counts
         :return:
@@ -60,32 +59,38 @@ class Issue(BacklogBase):
         res = self.client.fetch_json(uri_path='issues/count', query_params=params)
         return res['count']
 
-    @property
-    def comments(self):
+    def get_comments(self, id_=None):
         """
         Get issue comments  for the project
         """
-        res = self.client.fetch_json(uri_path=f'issues/{self.id}/comments')
+        if self.id is not None:
+            res = self.client.fetch_json(uri_path=f'issues/{self.id}/comments')
+        else:
+            res = self.client.fetch_json(uri_path=f'issues/{id_}/comments')
         for x in res:
             x['issue_id'] = self.id
         return [IssueComment(self.client).from_json(i) for i in res]
 
-    @property
-    def attachments(self):
+    def get_attachments(self, id_=None):
         """
         Get issue attachments fields for the project
         """
-        res = self.client.fetch_json(uri_path=f'issues/{self.id}/attachments')
+        if self.id is not None:
+            res = self.client.fetch_json(uri_path=f'issues/{self.id}/attachments')
+        else:
+            res = self.client.fetch_json(uri_path=f'issues/{id_}/attachments')
         for x in res:
             x['issue_id'] = self.id
         return [IssueAttachment(self.client).from_json(i) for i in res]
 
-    @property
-    def shared_files(self):
+    def get_shared_files(self, id_=None):
         """
         Get issue shared fields for the project
         """
-        res = self.client.fetch_json(uri_path=f'issues/{self.id}/sharedFiles')
+        if self.id is not None:
+            res = self.client.fetch_json(uri_path=f'issues/{self.id}/sharedFiles')
+        else:
+            res = self.client.fetch_json(uri_path=f'issues/{id_}/sharedFiles')
         for x in res:
             x['issue_id'] = self.id
         return [IssueAttachment(self.client).from_json(i) for i in res]
@@ -101,18 +106,16 @@ class Issue(BacklogBase):
     def from_json(self, response):
         from . import User
         res = super().from_json(response)
-        setattr(self, 'issue_type', IssueType(self.client).from_json(res._issue_type))
-        setattr(self, 'priority', Priority(self.client).from_json(res._priority))
-        setattr(self, 'assignee', User(self.client).from_json(res._assignee))
-        setattr(self, 'milestone', [Version(self.client).from_json(r) for r in res._milestone])
-        setattr(self, 'created_user', User(self.client).from_json(res._created_user))
-        setattr(self, 'updated_user', User(self.client).from_json(res._updated_user))
-        if res._attachments != []:
-            setattr(self, 'attachments', [IssueAttachment(self.client).from_json(r) for r in res._attachments])
-        if res._shared_files != []:
-            setattr(self, 'shared_files', [SharedFile(self.client).from_json(f) for f in res._shared_files])
-        if res._stars != []:
-            setattr(self, 'stars', [Star(self.client).from_json(f) for f in res._stars])
+        self.name = res.issue_key
+        private_attr = [attrs[0] for attrs in self._attr if attrs[0].startswith('_')]
+        objs = [IssueType, Priority, Status, User, Category, Version,
+                Version, User, User, IssueAttachment, SharedFile, Star]
+        for attr, obj in zip(private_attr, objs):
+            api_values = getattr(res, attr)
+            if isinstance(api_values, list):
+                setattr(self, attr[1:], [obj(self.client).from_json(value) for value in api_values])
+            else:
+                setattr(self, attr[1:], obj(self.client).from_json(api_values))
         return self
 
 
@@ -176,6 +179,7 @@ class IssueComment(BacklogBase):
             ('stars', 'stars'),
             ('notifications', 'notifications'),
             ('issue_id', 'issue_id'),
+            ('name', 'id'),
         )
 
     def from_json(self, response):

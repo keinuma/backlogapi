@@ -97,3 +97,11 @@ class AuthenticationError(BaseBacklogError):
     """
     def __init__(self):
         super().__init__('Certification failed')
+
+
+class FailedCreateInstance(BaseBacklogError):
+    """
+    Args of from_json method must be dict
+    """
+    def __init__(self):
+        super().__init__('Can not create instance from json')

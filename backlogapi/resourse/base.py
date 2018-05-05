@@ -2,6 +2,8 @@
 Base class for Backlog all object
 """
 
+from .. import exceptions
+
 
 class BacklogBase:
     """
@@ -30,12 +32,20 @@ class BacklogBase:
             return hash(self) == hash(other)
         raise NotImplementedError
 
+    @property
+    def url(self):
+        if self.id:
+            return f'{self.client.model_endpoint}{self.endpoint}/{self.id}'
+        return f'{self.client.model_endpoint}{self.endpoint}'
+
     def from_json(self, response):
         """
         Create the Object by json response
-        :param dict response: Space json object
+        :param dict response: dict type object
         :return Space space: self
         """
+        if not isinstance(response, dict):
+            return None
         for key, res in self._attr:
             setattr(self, key, response.get(res, None))
         return self
