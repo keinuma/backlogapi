@@ -11,8 +11,8 @@ class Space(BacklogBase):
     Representing a Backlog space.
     """
 
-    endpoint = 'space'
-    _crud_func = ('get',)
+    _endpoint = 'space'
+    _crud_func = None
 
     def __init__(self, client):
         super().__init__(client)
@@ -28,37 +28,45 @@ class Space(BacklogBase):
             ('created', 'created'),
             ('updated', 'updated'),
         )
+        setattr(self, 'get', self.get)
 
-    def activities(self, **params):
+    def get_activities(self, **params):
         """
         Get Backlog activities
         :param params: Optional parameters used for getting activities
         """
         return self.client.fetch_json(uri_path='space/activities', query_params=params)
 
-    def icon(self):
+    def get_icon(self):
         """
         Get space icon image file
         """
-        return self.client.fetch_json(uri_path='space/image')
+        return self.client.fetch_json(uri_path=f'{self._endpoint}/image')
 
-    def notification(self):
+    def get_notification(self):
         """
         Get space notification
         """
-        return self.client.fetch_json(uri_path='space/notification')
+        return self.client.fetch_json(uri_path=f'{self._endpoint}/notification')
 
     @utilities.protect((1,))
-    def disk_usage(self):
+    def update_notification(self):
+        """
+        Update space notification
+        """
+        return self.client.fetch_json(uri_path=f'{self._endpoint}/notification', method='PUT')
+
+    @utilities.protect((1,))
+    def get_disk_usage(self):
         """
         Representing Backlog disk usage for space
         """
         return self.client.fetch_json(uri_path='space/diskUsage')
 
     @utilities.protect((1, 2, 3, 4))
-    def post_attachment(self, files):
+    def update_attachment(self, files):
         """
-        Post attachment file to space
+        Update attachment file to space
         :param file files: file objects
         """
         return self.client.fetch_json(uri_path='space/attachment', method='POST', files=files)
@@ -67,6 +75,5 @@ class Space(BacklogBase):
         """
         Get one object
         """
-        res = self.client.fetch_json(self.endpoint, method='GET')
-        return self.__class__(self.client).from_json(res)
-
+        res = self.client.fetch_json(self._endpoint, method='GET')
+        return Space(self.client).from_json(res)
