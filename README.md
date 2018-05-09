@@ -3,37 +3,35 @@
 ### Python
 * python3.6.1
 
-### ライブラリ
+### Requirements
 * requests 2.18.4
 
-## How To Use
-### 一般ユーザ
-'''python
-
-
-    import backlogapi
+## Sample
+```python
+    from backlogapi import BacklogClient
 
     # 初期設定でspace名とapi keyを設定
-    client = backlogapi.BacklogProperty(space, apikey)
+    client = BacklogClient(api_key='your_key', space_name='space')
 
-    # スペース名を取得
-    client.get_space()
+    # スペース情報を取得
+    client.space.get()
 
     # プロジェクトの一覧を取得
     # 発行したAPIユーザーが参加しているプロジェクトのみ取得される
     # オプションとしてクエリパラメーターを設定できる
-    client.get_projects(query_params)
+    projects = client.project.all()
+    sample_project = projects[0]
 
     # プロジェクト情報の詳細を取得
-    client.get_project_info(projectID)
+    sample_project.get()
+    # or 
+    client.project.get(sample_project.id)
 
-    # 共有ファイルの一覧の取得
-    # 共有ファイルはプロジェクトIDとpathが必要
-    client.get_sharefile(projectIdOrKey, path, query_params)
-
-    # 課題一覧の取得
-    # 条件をクエリパラメーターに設定することができる
-    client.get_issues(projectIdOrKey, {'created': YYYY-MM-DD})
+    # ユーザーが所属しているプロジェクトの全課題の取得
+    client.issue.all()
+    
+    # 課題条件を選択して取得
+    client.issue.filter({'projectIdOrKey': sample_project.id})
 
     # 課題の追加
     # 入力パラメータに必須項目がある
@@ -52,11 +50,15 @@
     # 課題のIDと課題添付ファイルのIDを利用して削除する
     client.delete_issue_attachments(issueIdOrKey, attachmentId)
 
-'''
+```
+
+## Installation
+- The recommended way to install is using pip library:
+> $ pip install pybacklog
+
+
+## Documentation
+coming soon
 
 ### 管理者ユーザ
 * 追記予定
-
-
-### 更新情報
-* 2017/09/02 README追記

@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 from setuptools.command.test import test
+import os
 
 
 class BacklogTests(test):
@@ -14,6 +15,17 @@ class BacklogTests(test):
 
 
 tests_require = ['nose', 'coverage', 'unittest']
+
+
+def strip_comments(l):
+    return l.split('#', 1)[0].strip()
+
+
+def reqs(*f):
+    return list(filter(None, [strip_comments(l) for l
+                              in open(os.path.join(os.getcwd(), *f)).readlines()]))
+
+
 exec(open('backlogapi/version.py').read())
 
 setup(
@@ -42,7 +54,5 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
     ],
-    install_requires=[
-        'requests',
-    ],
+    install_requires=reqs('requirements.txt'),
 )
