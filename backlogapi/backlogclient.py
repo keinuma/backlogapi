@@ -7,6 +7,7 @@ import json
 import requests
 
 from .resourse import *
+from .utilities import save_image_file
 
 
 class BacklogClient:
@@ -22,7 +23,6 @@ class BacklogClient:
         self._space_name = space_name
         self.model_endpoint = f'https://{self._space_name}.backlog.jp/api/v2/'
         self.role = None
-        # self.check_role()
         self.space = Space(self)
         self.user = User(self)
         self.group = Group(self)
@@ -72,6 +72,10 @@ class BacklogClient:
         elif response.status_code == 204:
             return None
 
+        if response.headers['Content-Type'] == 'image/png':
+            ext = response.headers['Content-Type'].split('/')[1]
+            save_image_file('space_img', ext, response.content)
+            return None
         return response.json()
 
     def check_role(self):
@@ -80,4 +84,3 @@ class BacklogClient:
         """
         res = self.fetch_json('users/myself')
         self.role = res.get('roleType', None)
-

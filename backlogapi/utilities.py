@@ -4,6 +4,7 @@ Helper function for Backlog API
 
 
 from functools import wraps
+import requests
 
 from . import exceptions
 
@@ -17,7 +18,16 @@ def protect(roles):
             else:
                 role = self.client.role
             if role not in roles:
-                raise exceptions.UnauthorizedOperationError
+                raise exceptions.UnauthorizedOperationError()
             return func(self, *args, **kwargs)
         return __protect
     return _protect
+
+
+def save_image_file(file_name, ext, content):
+    with open('.'.join([file_name, ext]), 'wb') as f:
+        f.write(content)
+
+
+def is_connect_net():
+    pass
