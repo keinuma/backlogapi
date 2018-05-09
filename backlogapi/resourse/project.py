@@ -10,7 +10,7 @@ class Project(BacklogBase):
     """
     Representing Backlog user
     """
-    endpoint = 'projects'
+    _endpoint = 'projects'
 
     def __init__(self, client):
         super().__init__(client)
@@ -184,10 +184,10 @@ class IssueType(BacklogBase):
 
     def from_json(self, response):
         """
-        Create the issue type and set endpoint
+        Create the issue type and set _endpoint
         """
         super().from_json(response=response)
-        setattr(self, 'endpoint', f'projects/{self.project_id}/issueTypes')
+        setattr(self, '_endpoint', f'projects/{self.project_id}/issueTypes')
         return self
 
 
@@ -207,10 +207,10 @@ class Category(BacklogBase):
 
     def from_json(self, response):
         """
-        Create the issue type and set endpoint
+        Create the issue type and set _endpoint
         """
         super().from_json(response=response)
-        setattr(self, 'endpoint', f'projects/{self.project_id}/categories')
+        setattr(self, '_endpoint', f'projects/{self.project_id}/categories')
         return self
 
 
@@ -236,10 +236,10 @@ class Version(BacklogBase):
 
     def from_json(self, response):
         """
-        Create the issue type and set endpoint
+        Create the issue type and set _endpoint
         """
         super().from_json(response=response)
-        setattr(self, 'endpoint', f'projects/{self.project_id}/versions')
+        setattr(self, '_endpoint', f'projects/{self.project_id}/versions')
         return self
 
 
@@ -264,10 +264,10 @@ class CustomField(BacklogBase):
 
     def from_json(self, response):
         """
-        Create the issue type and set endpoint
+        Create the issue type and set _endpoint
         """
         super().from_json(response=response)
-        setattr(self, 'endpoint', f'projects/{self.project_id}/versions')
+        setattr(self, '_endpoint', f'projects/{self.project_id}/versions')
         return self
 
 

@@ -14,7 +14,7 @@ class Issue(BacklogBase):
     Representing issue
     """
 
-    endpoint = 'issues'
+    _endpoint = 'issues'
 
     def __init__(self, client):
         super().__init__(client)
@@ -123,7 +123,7 @@ class Status(BacklogBase):
     """
     Representing issue status
     """
-    endpoint = 'statuses'
+    _endpoint = 'statuses'
 
     def __init__(self, client):
         super().__init__(client)
@@ -137,7 +137,7 @@ class Resolution(BacklogBase):
     """
     Representing issue resolution
     """
-    endpoint = 'resolutions'
+    _endpoint = 'resolutions'
 
     def __init__(self, client):
         super().__init__(client)
@@ -151,7 +151,7 @@ class Priority(BacklogBase):
     """
     Representing issue priority
     """
-    endpoint = 'resolutions'
+    _endpoint = 'resolutions'
 
     def __init__(self, client):
         super().__init__(client)
@@ -185,7 +185,7 @@ class IssueComment(BacklogBase):
     def from_json(self, response):
         from . import User
         res = super().from_json(response)
-        setattr(self, 'endpoint', f'issues/{self.issue_id}/comments')
+        setattr(self, '_endpoint', f'issues/{self.issue_id}/comments')
         setattr(self, 'created_user', User(self.client).from_json(res._created_user))
         return self
 
@@ -218,7 +218,7 @@ class IssueAttachment(BacklogBase):
     def from_json(self, response):
         from . import User
         res = super().from_json(response)
-        setattr(self, 'endpoint', f'issues/{self.issue_id}/attachments')
+        setattr(self, '_endpoint', f'issues/{self.issue_id}/attachments')
         if hasattr(res, '_created_user'):
             setattr(self, 'created_user', User(self.client).from_json(res._created_user))
         return self
@@ -248,7 +248,7 @@ class IssueSharedFile(BacklogBase):
     def from_json(self, response):
         from . import User
         res = super().from_json(response)
-        setattr(self, 'endpoint', f'issues/{self.issue_id}/sharedFiles')
+        setattr(self, '_endpoint', f'issues/{self.issue_id}/sharedFiles')
         setattr(self, 'created_user', User(self.client).from_json(res._created_user))
         setattr(self, 'updated_user', User(self.client).from_json(res._updated_user))
         return self
