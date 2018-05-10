@@ -1,7 +1,5 @@
-from unittest import mock
-
 from . import BaseBacklogTestCase
-from backlogapi import BacklogClient, Space, BacklogBase
+from backlogapi import Space, BacklogBase
 from .result.res_space import space_json, activate_json, disk_usage_json
 
 
@@ -9,6 +7,11 @@ class TestResourceSpace(BaseBacklogTestCase):
     def test_space_instance(self):
         self.response.json.return_value = space_json
         space = self.client.space.get()
+        self.check_object(space, space_json)
+
+    def test_space_class_instance(self):
+        self.response.json.return_value = space_json
+        space = Space(self.client).get()
         self.check_object(space, space_json)
 
     def test_space_url(self):
