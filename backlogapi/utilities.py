@@ -18,7 +18,8 @@ def protect(roles):
             else:
                 role = self.client.role
             if role not in roles:
-                raise exceptions.UnauthorizedOperationError()
+                print(f'This process need {roles}')
+                raise exceptions.UnauthorizedOperationError
             return func(self, *args, **kwargs)
         return __protect
     return _protect

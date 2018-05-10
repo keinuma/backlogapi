@@ -62,9 +62,8 @@ class BacklogBase:
         Get one object
         """
         if self.id is not None:
-            res = self.client.fetch_json('/'.join([self._endpoint, self.id]), method='GET')
-        else:
-            res = self.client.fetch_json('/'.join([self._endpoint, id_]), method='GET')
+            id_ = self.id
+        res = self.client.fetch_json(f'{self._endpoint}/{id_}', method='GET')
         return self.__class__(self.client).from_json(res)
 
     def _filter(self, **params):
@@ -87,15 +86,13 @@ class BacklogBase:
         Update the object
         """
         if self.id is not None:
-            res = self.client.fetch_json(f'{self._endpoint}/{self.id}', method='POST', post_params=params)
-        else:
-            res = self.client.fetch_json(f'{self._endpoint}/{id_}', method='POST', post_params=params)
+            id_ = self.id
+        res = self.client.fetch_json(f'{self._endpoint}/{id_}', method='POST', post_params=params)
         return self.__class__(self.client).from_json(res)
 
     def _delete(self, id_=None):
         if self.id is not None:
-            res = self.client.fetch_json(f'{self._endpoint}/{self.id}', method='DELETE')
-        else:
-            res = self.client.fetch_json(f'{self._endpoint}/{id_}', method='DELETE')
+            id_ = self.id
+        res = self.client.fetch_json(f'{self._endpoint}/{id_}', method='DELETE')
         return self.__class__(self.client).from_json(res)
 

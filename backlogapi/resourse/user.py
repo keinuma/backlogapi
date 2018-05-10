@@ -2,15 +2,15 @@
 Model for Backlog user
 """
 
-from .base import BacklogBase
-from .. import utilities
+from . import BacklogBase
 
 
 class User(BacklogBase):
     """
     Representing Backlog user
     """
-    endpoint = 'users'
+    _endpoint = 'users'
+    _crud_func = ('all', 'get', 'create', 'update', 'delete')
 
     def __init__(self, client):
         super().__init__(client)
@@ -23,9 +23,10 @@ class User(BacklogBase):
             ('mail_address', 'mailAddress')
         )
 
-    @property
-    def watching(self):
-        res = self.client.fetch_json(uri_path=f'users/{self.id}/watchings')
+    def get_watchings(self, id_):
+        if self.id is not None:
+            id_ = self.id
+        res = self.client.fetch_json(uri_path=f'users/{id_}/watchings')
         for x in res:
             x['user_id'] = self.id
         return [Watching(self.client).from_json(r) for r in res]
