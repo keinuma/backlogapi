@@ -34,10 +34,20 @@ class Project(BacklogBase):
         return self.client.fetch_json(uri_path=f'projects/{self.id}/activities',
                                       query_params=params)
 
+    def get_issues(self, params=None):
+        """
+        Get issue the project
+        """
+        if params is None:
+            params = {'projectId[]': self.id}
+        from . import Issue
+        res = self.client.fetch_json(uri_path=f'issues', query_params=params)
+        return [Issue(self.client).from_json(u) for u in res]
+
     @property
     def users(self):
         """
-        Add user the project
+        Get user the project
         """
         from . import User
         res = self.client.fetch_json(uri_path=f'projects/{self.id}/users')

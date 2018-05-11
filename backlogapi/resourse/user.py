@@ -23,13 +23,58 @@ class User(BacklogBase):
             ('mail_address', 'mailAddress')
         )
 
-    def get_watchings(self, id_):
+    def get_watchings(self, id_=None):
+        """
+        Get user watching issues
+        """
         if self.id is not None:
             id_ = self.id
         res = self.client.fetch_json(uri_path=f'users/{id_}/watchings')
         for x in res:
             x['user_id'] = self.id
         return [Watching(self.client).from_json(r) for r in res]
+
+    def get_icon(self, id_=None):
+        """
+        Get user icon
+        """
+        if self.id is not None:
+            id_ = self.id
+        self.client.fetch_json(uri_path=f'users/{id_}/icon')
+        return self
+
+    def get_activities(self, id_=None, params=None):
+        """
+        Get user activities
+        """
+        if params is None:
+            params = {}
+        if self.id is not None:
+            id_ = self.id
+        return self.client.fetch_json(uri_path=f'users/{id_}/activities', query_params=params)
+
+    def get_stars(self, id_=None, params=None):
+        """
+        Get user stars
+        """
+        from . import Star
+        if params is None:
+            params = {}
+        if self.id is not None:
+            id_ = self.id
+        res = self.client.fetch_json(uri_path=f'users/{id_}/stars', query_params=params)
+        return [Star(self.client).from_json(r) for r in res]
+
+    def get_starts_count(self, id_=None, params=None):
+        """
+        Get star number user get
+        """
+        if params is None:
+            params = {}
+        if self.id is not None:
+            id_ = self.id
+        res = self.client.fetch_json(uri_path=f'users/{id_}/stars/count', query_params=params)
+        return res['count']
 
 
 class Watching(BacklogBase):

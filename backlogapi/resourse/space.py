@@ -28,20 +28,22 @@ class Space(BacklogBase):
             ('created', 'created'),
             ('updated', 'updated'),
         )
-        setattr(self, 'get', self.get)
 
-    def get_activities(self, **params):
+    def get_activities(self, params=None):
         """
         Get Backlog activities
-        :param params: Optional parameters used for getting activities
+        :param dict params: Optional parameters used for getting activities
         """
+        if params is None:
+            params = {}
         return self.client.fetch_json(uri_path='space/activities', query_params=params)
 
     def get_icon(self):
         """
         Get space icon image file
         """
-        return self.client.fetch_json(uri_path=f'{self._endpoint}/image')
+        self.client.fetch_json(uri_path=f'{self._endpoint}/image')
+        return self
 
     def get_notification(self):
         """
@@ -64,7 +66,7 @@ class Space(BacklogBase):
         return self.client.fetch_json(uri_path='space/diskUsage')
 
     @utilities.protect((1, 2, 3, 4))
-    def update_attachment(self, files):
+    def create_attachment(self, files):
         """
         Update attachment file to space
         :param file files: file objects
