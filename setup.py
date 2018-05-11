@@ -38,6 +38,7 @@ setup(
     author='Keisuke Numata',
     author_email='nununu.mono@gmail.com',
     description='Backlog client for Python',
+    long_description=open('README.md').read() + '\n\n' + open('CHANGELOG.md').read(),
     keywords='backlog backlogapi pybacklog',
     tests_require=tests_require,
     cmdclass={'test': BacklogTests},
