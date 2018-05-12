@@ -1,19 +1,12 @@
 sudo: false
 language: python
 python:
-- '3.6'
+  - "3.6"
 branches:
   only: master
 install:
-- make
-- pip install tox-travis coveralls
+  - make
+  - pip install tox-travis coveralls
 script: make test
 cache: pip
 after_success: coveralls
-deploy:
-  provider: pypi
-  user: keinuma
-  password:
-    secure: VUI3wvdVdzK6Er+WYzmQkR3tnvDrqOoXLvst5eMJq6Eki2AjvK1rKsq+zplmtvih1dcn4BYU/nO53KniKdBvZIn7VJWf3XQCG+Vor6launS8SnUQ7ZthN+EHeNcw6/lEFTw9F6PP5/gox3nsM8JBMZDiK3bMvZMgJWQ4aXqOOVV2DbjZbJmUDAtN9ZEypJn04/JFE7Tx3/qX/Hl6eAYlL9dAKJ1jXf846vWiHOxmd2axK7cjzGSlrn0mQ5jC8tO1pE4S9Z2RUD9QDt16dxDiFz7GqPNJsLVDn+xJaKSCBDHn6yi5y0m0bi7WL3vQqiT7xgyJUyO4B+vecrGa0zxQiNFJHFGp8sbLHk9/OTQ3kdqC6zyF0xrB/voXs7QVHEbc7RO2mVM/kIR/8hclIVN0l1r6TZSC/5Nshxcgz15TWZJTxLskrZCHSBssMLLXzX2sqC0CG7feLFV4VDaL0HeCZXACETbaSyAWZHLhYaMUs/FpLbgd1Ml4hfCVcznuHpY7FPl6IGvWxS8OX88BzTLEon6rSebPu3ThLGSSf+VSrjcqGhzKREGOPBYAdc4jAOKqFel2tRuDJ419k12+93JRZXt0waVC1M2G/Q6fHuP3ZDQOGHjWTDqwXlkTHR8Ad/TR47uXWZv3HahBsz8nFM/Ul7IsNN8+qawO59CyQSXWI8U=
-  on:
-    tags: true
