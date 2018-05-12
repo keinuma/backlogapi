@@ -14,7 +14,7 @@ class BacklogTests(test):
         nose.run(argv=['nosetests'])
 
 
-tests_require = ['nose', 'coverage', 'unittest']
+tests_require = ['nose', 'coverage']
 
 
 def strip_comments(l):
