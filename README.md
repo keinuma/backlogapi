@@ -2,7 +2,7 @@
 Backlog API is client library for using backlog API.
 This library provides simple connection to RESTful API by CRUD function.
 
-```pythonstub
+```python
 >>> from backlogapi import BacklogClient
 
 >>> client = BacklogClient(api_key='your_key', space_name='space')
@@ -28,6 +28,10 @@ project1
 '2018-05-25T12:00:00Z'
 ```
 
+## Future
+* Support all API
+* Support OAuth 2.0
+and any more
 
 ## Requirements
 * Python 3.6
@@ -40,10 +44,5 @@ $ pip intsall backlogapi
 ```
 
 
-## Installation
-- The recommended way to install is using pip library:
-> $ pip install pybacklog
-
 ## License
 This software is licensed under the MIT license.
-

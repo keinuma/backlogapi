@@ -1,0 +1,21 @@
+sudo: false
+language: python
+python:
+ - 3.6
+install:
+ - pip install -r tests/requirements.txt
+ - pip install coveralls
+script:
+- nosetests --with-coverage --cover-erase --cover-package=backlogapi
+after_success: coveralls
+deploy:
+  provider: pypi
+  user: keinuma
+  on:
+    repo: keinuma/backlogapi
+    branch: 
+    distributions: sdist --formats=gztar,zip
+    python: 3.6
+  allow_failuer: false
+  password:
+    secure: aV6AktL4aj7heodmBRPt533TEB6nnalUls6L+03MD/Mczeb0SxTeSflBE5nGMJnFgHe/K2fW/IoBQnx8TGbGsSfz+rp8ruZ7QhtLDbjQlQPgms7W2dwDJGTlGUsR/Iu7lFw+4prsmY5iGxPhAdGxxamIY6nj87ku/jFbsshEj87H72KAXiecItVxWUHwEvwNiqNZ2FUKISg5VjGpQbLqNdgHk1broTPq3Ghoa64JH+x30bdfbS6dCqq/TJ+5Yfvh23mcqC4Qd5vxvmNZHvz/kaUbsxz+2HfPULOFnkSyZZSyUDDOra+adAzsVmSsasP5g+rxG6mKT8/1zSjp77oaxhtfGLmRxc6gCG5KQfmRgv2R6E2hzAB2MIfWjEa+vnYRvAhfvcTCY3bk4QGvRATEygYMNAyQ9o3F6beD+6n5DoNLOdYmeO8YNYNvvBV+ZM5bMBMViFX/avl8i0ynkSndLOgv1ZevdyXVApIolb/uu6WXVT2LGA0sa4aTitKJmGry59yyR3CkBn5iva/N0apg75+CZeY82rUEGwXCYMU+Dlpn5odC/DHuxR6iLWLXCh91MivCCmXWHGjbueZNAvP7GaoznLHKlfm4XHTfU/gF4e5DPtt3FvecefuluDD1O5e77NUTRNDylpxdUgWAdz7eB9DFXH+RamF2V5XQCTzrvgA=
