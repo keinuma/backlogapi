@@ -29,7 +29,7 @@ def reqs(*f):
 exec(open('backlogapi/version.py').read())
 
 setup(
-    name='pybacklog',
+    name='backlogapi',
     version=globals()['__version__'],
     packages=find_packages(exclude=('tests', 'tests.*')),
     include_package_data=True,
@@ -39,7 +39,7 @@ setup(
     author_email='nununu.mono@gmail.com',
     description='Backlog client for Python',
     long_description=open('README.md').read() + '\n\n' + open('CHANGELOG.md').read(),
-    keywords='backlog backlogapi pybacklog',
+    keywords='backlog backlogapi library',
     tests_require=tests_require,
     cmdclass={'test': BacklogTests},
     zip_safe=False,
