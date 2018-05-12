@@ -39,6 +39,7 @@ setup(
     author_email='nununu.mono@gmail.com',
     description='Backlog client for Python',
     long_description=open('README.md').read() + '\n\n' + open('CHANGELOG.md').read(),
+    long_description_content_type='text/markdown',
     keywords='backlog backlogapi library',
     tests_require=tests_require,
     cmdclass={'test': BacklogTests},

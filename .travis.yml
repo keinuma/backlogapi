@@ -1,10 +1,11 @@
 sudo: false
 language: python
 python:
-  - 3.6
+  - '3.6'
 install:
+  - pip install coveralls
   - pip install -r tests/requirements.txt
-  - pip install -e . --use-mirrors
+  - pip install -e .
 script:
   - nosetests --with-coverage --cover-erase --cover-package=backlogapi
 after_success: coveralls
@@ -14,7 +15,7 @@ deploy:
   on:
     repo: keinuma/backlogapi
     branch: 
-    distributions: sdist --formats=gztar,zip
+    distributions: "sdist bdist_wheel"
     python: 3.6
   allow_failuer: false
   password:

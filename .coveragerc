@@ -1,9 +1,0 @@
-[run]
-source = backlogapi
-
-[report]
-show_missing = True
-omit =
-    */packages/*
-    */python?.?/*
-    */site-packages/*
