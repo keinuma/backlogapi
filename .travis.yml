@@ -14,7 +14,7 @@ deploy:
   on:
     repo: keinuma/backlogapi
     branch: 
-    distributions: sdist --formats=gztar,zip
+    distributions: "sdist bdist_wheel"
     python: 3.6
   allow_failuer: false
   password:
