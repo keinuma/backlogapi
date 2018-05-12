@@ -7,5 +7,6 @@ branches:
 install:
   - make
   - pip install tox-travis coveralls
-
+script: make test
 cache: pip
+after_success: coveralls
