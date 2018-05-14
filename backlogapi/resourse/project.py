@@ -22,10 +22,12 @@ class Project(BacklogBase):
             ('subtasking_enabled', 'subtaskingEnabled'),
             ('project_leader_can_edit_project_leader', 'projectLeaderCanEditProjectLeader'),
             ('text_formatting_rule', 'textFormattingRule'),
-            ('archived', 'archived')
+            ('display_order', 'displayOrder'),
+            ('archived', 'archived'),
+            ('use_wiki_tree_view', 'useWikiTreeView'),
         )
 
-    def activities(self, **params):
+    def get_activities(self, **params):
         """
         Get the project activities
         """
@@ -44,13 +46,14 @@ class Project(BacklogBase):
         res = self.client.fetch_json(uri_path=f'issues', query_params=params)
         return [Issue(self.client).from_json(u) for u in res]
 
-    @property
-    def users(self):
+    def get_users(self, params=None):
         """
         Get user the project
         """
         from . import User
-        res = self.client.fetch_json(uri_path=f'projects/{self.id}/users')
+        if params is None:
+            params = {}
+        res = self.client.fetch_json(uri_path=f'projects/{self.id}/users', query_params=params)
         return [User(self.client).from_json(u) for u in res]
 
     def add_user(self, user_id):
@@ -72,14 +75,13 @@ class Project(BacklogBase):
                                method='DELETE',
                                post_params={'userId': user_id})
 
-    @property
     @utilities.protect((1,))
-    def admins(self):
+    def get_admins(self):
         """
         Get admin user the project
         """
         from . import User
-        res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrator')
+        res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrators')
         return [User(self.client).from_json(u) for u in res]
 
     @utilities.protect((1,))
@@ -89,7 +91,7 @@ class Project(BacklogBase):
         :param user_id:
         """
         from . import User
-        res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrator',
+        res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrators',
                                      method='POST',
                                      post_params={'userId': user_id})
         return User(self.client).from_json(res)
@@ -101,7 +103,7 @@ class Project(BacklogBase):
         :param user_id:
         """
         from . import User
-        res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrator',
+        res = self.client.fetch_json(uri_path=f'projects/{self.id}/administrators',
                                      method='DELETE',
                                      post_params={'userId': user_id})
         return User(self.client).from_json(res)
