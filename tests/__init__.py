@@ -43,7 +43,11 @@ class BaseBacklogTestCase(unittest.TestCase):
             if key in ('nulabAccount',):
                 continue
             snake_key = self.camel_to_snake(key)
-            self.assertEqual(getattr(instance, snake_key), response[key])
+            value = getattr(instance, snake_key, None)
+            if value and 'backlogapi' in str(type(value)):
+                self.check_object(value, response[key])
+                continue
+            self.assertEqual(value, response[key])
 
     def camel_to_snake(self, string):
         return re.sub("([A-Z])", lambda x: "_" + x.group(1).lower(), string)
