@@ -37,7 +37,7 @@ setup(
     license='MIT',
     author='Keisuke Numata',
     author_email='nununu.mono@gmail.com',
-    description='Backlog client for Python',
+    description='Backlog client library for Python',
     long_description=open('README.md').read() + '\n\n' + open('CHANGELOG.md').read(),
     long_description_content_type='text/markdown',
     keywords='backlog backlogapi library',

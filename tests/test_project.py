@@ -3,7 +3,7 @@ from backlogapi import Project, BacklogBase
 from .result.res_project import *
 
 
-class TestResourceSpace(BaseBacklogTestCase):
+class TestResourceProject(BaseBacklogTestCase):
     def test_space_instance(self):
         self.response.json.return_value = project_json
         projects = self.client.project.all()
@@ -26,6 +26,12 @@ class TestResourceSpace(BaseBacklogTestCase):
         self.response.json.return_value = users_json
         users = self.client.project.all()[0].get_users()
         self.check_object(users, users_json)
+
+    def test_project_add_user(self):
+        self.assertRaises(TypeError, self.client.project.add_user)
+
+    def test_project_delete_user(self):
+        self.assertRaises(TypeError, self.client.project.delete_user)
 
     def test_project_admins(self):
         self.response.json.return_value = admins_json
