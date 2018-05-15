@@ -24,11 +24,11 @@ class BaseBacklogTestCase(unittest.TestCase):
         for target in self.patch_targets:
             getattr(self, f'{self.patch_prefix}_{target}').side_effect = side_effect
 
-    def check_object(self, instance, response: dict):
+    def check_object(self, instance, response):
         """
         Check attribution in instance object equal response
         :param instance:
-        :param dict response:
+        :param response:
         :return:
         """
         if isinstance(response, list):
@@ -44,10 +44,15 @@ class BaseBacklogTestCase(unittest.TestCase):
                 continue
             snake_key = self.camel_to_snake(key)
             value = getattr(instance, snake_key, None)
+            answer = response[key]
+            if isinstance(value, list):
+                if value:
+                    value = value[0]
+                    answer = answer[0]
             if value and 'backlogapi' in str(type(value)):
-                self.check_object(value, response[key])
+                self.check_object(value, answer)
                 continue
-            self.assertEqual(value, response[key])
+            self.assertEqual(value, answer)
 
     def camel_to_snake(self, string):
         return re.sub("([A-Z])", lambda x: "_" + x.group(1).lower(), string)

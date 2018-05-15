@@ -12,9 +12,9 @@ class BacklogBase:
     _endpoint = None
     _crud_func = ('all', 'get', 'filter', 'create', 'update', 'delete')
 
-    def __init__(self, client):
+    def __init__(self, client, id_=None):
         self.client = client
-        self.id = None
+        self.id = id_
         self.name = None
         self._attr = None
         if self._crud_func is not None:

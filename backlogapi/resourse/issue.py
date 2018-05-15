@@ -16,8 +16,8 @@ class Issue(BacklogBase):
 
     _endpoint = 'issues'
 
-    def __init__(self, client):
-        super().__init__(client)
+    def __init__(self, client, id_=None):
+        super().__init__(client, id_)
         self.issue_type = None
         self.created_user = None
         self.updated_user = None
@@ -213,6 +213,7 @@ class IssueAttachment(BacklogBase):
             ('size', 'size'),
             ('_created_user', 'createdUser'),
             ('created', 'created'),
+            ('issue_id', 'issue_id'),
         )
 
     def from_json(self, response):
