@@ -1,4 +1,9 @@
 # Change Log
+## v0.1.5 (2018/05/15)
+- Add issue and project test
+- Fix example code
+- Delete unusual code
+
 ## v0.1.4 (2018/05/12)
 Fix deployment
 
