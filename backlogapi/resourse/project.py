@@ -12,8 +12,8 @@ class Project(BacklogBase):
     """
     _endpoint = 'projects'
 
-    def __init__(self, client):
-        super().__init__(client)
+    def __init__(self, client, id_=None):
+        super().__init__(client, id_)
         self._attr = (
             ('id', 'id'),
             ('project_key', 'projectKey'),
